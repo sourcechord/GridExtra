@@ -1,0 +1,20 @@
+﻿<Window x:Class="BasicSample.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BasicSample.Wpf"
+        xmlns:ge="clr-namespace:SourceChord.GridExtra;assembly=GridExtra.Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid x:Name="grid" ge:GridEx.ColumnDefinition="*, *, *, *"
+          ge:GridEx.TemplateArea="
+            Header Header Header &#10;
+            Menu Content SubMenu &#10;
+            Footer Footer Footer &#10;
+          ">
+        <Button Content="Button" Margin="5" ge:GridEx.AreaName="Header" />
+        <Button Content="Menu" Margin="5" ge:GridEx.AreaName="Menu"/>
+        <Button Content="Content" Margin="5"  Click="Button_Click" ge:GridEx.Area="1,1,2,2"/>
+    </Grid>
+</Window>
