@@ -26,5 +26,15 @@ namespace BasicSample.Uwp
         {
             this.InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var temp = @"
+            Header Header SubMenu
+            Menu Content SubMenu
+            Footer Footer Footer
+";
+            SourceChord.GridExtra.GridEx.SetTemplateArea(grid, temp);
+        }
     }
 }

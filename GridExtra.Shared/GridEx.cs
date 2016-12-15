@@ -156,7 +156,7 @@ namespace SourceChord.GridExtra
                                .Select(o => o.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 
             // 行×列数のチェック
-            var num = columns.First().Count();
+            var num = columns.FirstOrDefault().Count();
             var isValidRowColumn = columns.All(o => o.Count() == num);
             if (!isValidRowColumn)
             {
@@ -303,16 +303,24 @@ namespace SourceChord.GridExtra
                 return;
             }
 
-            UpdateArea(ctrl, name);
+            if (ctrl.Parent == null)
+            {
+                ctrl.Loaded += (_, __) => { UpdateArea(ctrl, name); };
+            }
+            else
+            {
+                UpdateArea(ctrl, name);
+            }
         }
 
         private static void UpdateArea(FrameworkElement element, string name)
         {
             var grid = element.Parent as Grid;
+            if (grid == null) return;
             var areaList = GetAreaDefinitions(grid);
             if (areaList == null) return;
 
-            var area = areaList.First(o => o.Name == name);
+            var area = areaList.FirstOrDefault(o => o.Name == name);
             if (area != null)
             {
                 Grid.SetColumn(element, area.Column);

@@ -5,9 +5,25 @@
     xmlns:local="using:BasicSample.Uwp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ge="using:SourceChord.GridExtra"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Grid x:Name="grid"
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+          ge:GridEx.ColumnDefinition="*, *, *, *"
+          ge:GridEx.TemplateArea="
+            Header Header Header &#10;
+            Menu Content SubMenu &#10;
+            Footer Footer Footer &#10;
+          ">
+        <Grid.Resources>
+            <Style TargetType="Button">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+            </Style>
+        </Grid.Resources>
+        <Button Content="Button" Margin="5" ge:GridEx.AreaName="Header" />
+        <Button Content="Menu" Margin="5" ge:GridEx.AreaName="Menu"/>
+        <Button Content="Content" Margin="5" ge:GridEx.Area="1,1,2,2" Click="Button_Click"/>
     </Grid>
 </Page>
