@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>GridExtra</id>
+        <version>0.1.0</version>
+        <title>GridExtra</title>
+        <authors>SourceChord</authors>
+        <owners>SourceChord</owners>
+        <licenseUrl>https://github.com/sourcechord/GridExtra/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/sourcechord/GridExtra</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>GridExtra is a custom panel library for WPF/UWP.</description>
+        <copyright>Copyright 2016</copyright>
+        <tags>XAML WPF UWP Panel Library</tags>
+    </metadata>
+    <files>
+        <file src="..\Build\Wpf\Release\GridExtra.Wpf.dll" target="lib\net45\GridExtra.Wpf.dll" />
+        <file src="..\Build\Uwp\Release\GridExtra.Uwp.dll" target="lib\uap10.0\GridExtra.Uwp.dll" />
+    </files>
+</package>

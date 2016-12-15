@@ -15,6 +15,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicSample.Wpf", "Sample\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicSample.Uwp", "Sample\BasicSample.Uwp\BasicSample.Uwp.csproj", "{416D9AA6-F3E7-4338-B9A3-E060060DAF0C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{E1C85495-293B-4198-845C-6D7068A1961E}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget\GridExtra.nuspec = Nuget\GridExtra.nuspec
+		Nuget\pack.bat = Nuget\pack.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		GridExtra.Shared\GridExtra.Shared.projitems*{4914d867-f667-4151-a039-3fde665f3106}*SharedItemsImports = 13
