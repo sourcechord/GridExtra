@@ -28,9 +28,10 @@ namespace BasicSample.Wpf
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var temp = @"
-            Header Header SubMenu
-            Menu Content SubMenu
-            Footer Footer Footer
+            Header  Header
+            Menu    SubMenu
+            Content Content
+            Footer  Footer
 ";
             SourceChord.GridExtra.GridEx.SetTemplateArea(grid, temp);
         }

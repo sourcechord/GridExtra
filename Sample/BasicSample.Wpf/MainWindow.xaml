@@ -7,14 +7,16 @@
         xmlns:ge="clr-namespace:SourceChord.GridExtra;assembly=GridExtra.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid x:Name="grid" ge:GridEx.ColumnDefinition="*, *, *, *"
+    <Grid x:Name="grid"
           ge:GridEx.TemplateArea="
-            Header Header Header &#10;
-            Menu Content SubMenu &#10;
-            Footer Footer Footer &#10;
+            Header Header Header/
+            Menu Content SubMenu/
+            Footer Footer Footer/
           ">
-        <Button Content="Button" Margin="5" ge:GridEx.AreaName="Header" />
-        <Button Content="Menu" Margin="5" ge:GridEx.AreaName="Menu"/>
-        <Button Content="Content" Margin="5"  Click="Button_Click" ge:GridEx.Area="1,1,2,2"/>
+        <Button Content="Header"  Margin="5" ge:GridEx.AreaName="Header" />
+        <Button Content="Menu"    Margin="5" ge:GridEx.AreaName="Menu" />
+        <Button Content="SubMenu" Margin="5" ge:GridEx.AreaName="SubMenu" />
+        <Button Content="Content" Margin="5" ge:GridEx.AreaName="Content" Click="Button_Click" />
+        <Button Content="Footer"  Margin="5" ge:GridEx.AreaName="Footer" />
     </Grid>
 </Window>
