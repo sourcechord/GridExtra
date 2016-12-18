@@ -174,7 +174,6 @@ namespace SourceChord.GridExtra
                 throw new ArgumentException("Invalid Row/Column definition.");
             }
 
-
             // グリッドを一度初期化
             grid.RowDefinitions.Clear();
             grid.ColumnDefinitions.Clear();
@@ -196,7 +195,7 @@ namespace SourceChord.GridExtra
                 grid.ColumnDefinitions.Add(new ColumnDefinition());
             }
 
-
+            // Area定義をパース
             var areaList = ParseAreaDefinition(columns);
             SetAreaDefinitions(grid, areaList);
 
@@ -233,10 +232,12 @@ namespace SourceChord.GridExtra
                         isValid = isValid && group.Any(o => o.column == x && o.row == y);
                     }
 
-                if (isValid)
+                if (!isValid)
                 {
-                    result.Add(new AreaDefinition(group.Key, top, left, bottom - top + 1, right - left + 1));
+                    throw new ArgumentException($"\"{group.Key}\" is invalid area definition.");
                 }
+
+                result.Add(new AreaDefinition(group.Key, top, left, bottom - top + 1, right - left + 1));
             }
 
             return result;
