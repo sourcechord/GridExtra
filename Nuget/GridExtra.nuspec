@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>GridExtra</id>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
         <title>GridExtra</title>
         <authors>SourceChord</authors>
         <owners>SourceChord</owners>
