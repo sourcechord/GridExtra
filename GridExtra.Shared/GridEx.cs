@@ -171,6 +171,7 @@ namespace SourceChord.GridExtra
             if (!isValidRowColumn)
             {
                 // Invalid Row Columns...
+                throw new ArgumentException("Invalid Row/Column definition.");
             }
 
 
