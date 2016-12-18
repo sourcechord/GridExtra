@@ -105,6 +105,8 @@ Your ListBox become to not virtualize items of ListBox.
 ### GridEx
 GridEx is Helper class for defining Grid properties.
 
+![demo](./docs/GridEx/demo.gif)
+
 #### Example1 (Row/Column Definition)
 ```xml
     <Grid ge:GridEx.RowDefinition="*, *, *, *"
