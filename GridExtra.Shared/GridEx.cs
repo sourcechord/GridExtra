@@ -150,7 +150,7 @@ namespace SourceChord.GridExtra
 
             // 行×列数のチェック
             // 空行や、スペースを除去して、行×列のデータ構造に変形
-            var columns = param.Split('\n')
+            var columns = param.Split(new[] { '\n', '/' })
                                .Select(o => o.Trim())
                                .Where(o => !string.IsNullOrWhiteSpace(o))
                                .Select(o => o.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
