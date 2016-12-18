@@ -21,18 +21,18 @@ namespace SourceChord.GridExtra
     public class AreaDefinition
     {
         public string Name { get; set; }
-        public int Column { get; set; }
         public int Row { get; set; }
-        public int ColumnSpan { get; set; }
+        public int Column { get; set; }
         public int RowSpan { get; set; }
+        public int ColumnSpan { get; set; }
 
-        public AreaDefinition(string name, int column, int row, int columnSpan, int rowSpan)
+        public AreaDefinition(string name, int row, int column, int rowSpan, int columnSpan)
         {
             this.Name = name;
-            this.Column = column;
             this.Row = row;
-            this.ColumnSpan = columnSpan;
+            this.Column = column;
             this.RowSpan = rowSpan;
+            this.ColumnSpan = columnSpan;
         }
     }
 
@@ -216,7 +216,7 @@ namespace SourceChord.GridExtra
 
                 if (isValid)
                 {
-                    result.Add(new AreaDefinition(group.Key, left, top, right - left + 1, bottom - top + 1));
+                    result.Add(new AreaDefinition(group.Key, top, left, bottom - top + 1, right - left + 1));
                 }
             }
 
@@ -323,10 +323,10 @@ namespace SourceChord.GridExtra
             var area = areaList.FirstOrDefault(o => o.Name == name);
             if (area != null)
             {
-                Grid.SetColumn(element, area.Column);
                 Grid.SetRow(element, area.Row);
-                Grid.SetColumnSpan(element, area.ColumnSpan);
+                Grid.SetColumn(element, area.Column);
                 Grid.SetRowSpan(element, area.RowSpan);
+                Grid.SetColumnSpan(element, area.ColumnSpan);
             }
         }
 
@@ -358,16 +358,16 @@ namespace SourceChord.GridExtra
                             .Select(o => int.Parse(o))
                             .ToList();
 
-            // Column, Row, ColumnSpan, RowSpan
+            // Row, Column, RowSpan, ColumnSpan
             if (list.Count() != 4)
             {
                 return;
             }
 
-            Grid.SetColumn(ctrl, list[0]);
-            Grid.SetRow(ctrl, list[1]);
-            Grid.SetColumnSpan(ctrl, list[2]);
-            Grid.SetRowSpan(ctrl, list[3]);
+            Grid.SetRow(ctrl, list[0]);
+            Grid.SetColumn(ctrl, list[1]);
+            Grid.SetRowSpan(ctrl, list[2]);
+            Grid.SetColumnSpan(ctrl, list[3]);
         }
     }
 }
