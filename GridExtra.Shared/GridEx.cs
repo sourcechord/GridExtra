@@ -56,7 +56,12 @@ namespace SourceChord.GridExtra
             var grid = d as Grid;
             var param = e.NewValue as string;
 
-            if (d == null || param == null)
+            InitializeColumnDefinition(grid, param);
+        }
+
+        private static void InitializeColumnDefinition(Grid grid, string param)
+        {
+            if (grid == null || param == null)
             {
                 return;
             }
@@ -91,7 +96,12 @@ namespace SourceChord.GridExtra
             var grid = d as Grid;
             var param = e.NewValue as string;
 
-            if (d == null || param == null)
+            InitializeRowDefinition(grid, param);
+        }
+
+        private static void InitializeRowDefinition(Grid grid, string param)
+        {
+            if (grid == null || param == null)
             {
                 return;
             }
@@ -163,6 +173,14 @@ namespace SourceChord.GridExtra
                 // Invalid Row Columns...
             }
 
+
+            // グリッドを一度初期化
+            grid.RowDefinitions.Clear();
+            grid.ColumnDefinitions.Clear();
+
+            // GridEx.RowDefinition/GridEx.ColumnDefinitionの設定内容で、行/列を初期化
+            InitializeRowDefinition(grid, GetRowDefinition(grid));
+            InitializeColumnDefinition(grid, GetColumnDefinition(grid));
 
             // グリッド数を調整(不足分の行/列を足す)
             var rowShortage = columns.Count() - grid.RowDefinitions.Count;
