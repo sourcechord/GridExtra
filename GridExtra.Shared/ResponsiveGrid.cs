@@ -33,10 +33,6 @@ namespace SourceChord.GridExtra
             var availableWidth = double.IsPositiveInfinity(availableSize.Width) ? double.PositiveInfinity : availableSize.Width / this.MaxDivision;
             var children = this.Children.OfType<UIElement>();
 
-            // パネルが必要とするサイズの計算用
-            var totalRowWidth = 0.0;
-            var maxRowHeight = 0.0;
-            var totalSize = new Size();
 
             foreach (UIElement child in this.Children)
             {
@@ -49,19 +45,12 @@ namespace SourceChord.GridExtra
                     var offset = this.GetOffset(child, availableSize.Width);
                     var push = this.GetPush(child, availableSize.Width);
                     var pull = this.GetPull(child, availableSize.Width);
-                    
+
                     if (count + span + offset > this.MaxDivision)
                     {
                         // リセット
                         currentRow++;
                         count = 0;
-
-                        // パネル全体が必要とするサイズを更新
-                        totalSize.Width = Math.Max(totalSize.Width, totalRowWidth);
-                        totalSize.Height += maxRowHeight;
-
-                        totalRowWidth = 0;
-                        maxRowHeight = 0;
                     }
 
                     SetActualColumn(child, count + offset + push - pull);
@@ -71,11 +60,18 @@ namespace SourceChord.GridExtra
 
                     var size = new Size(availableWidth * span, double.PositiveInfinity);
                     child.Measure(size);
-
-                    // 現在の行の幅、要素の最大高さを計算
-                    totalRowWidth += child.DesiredSize.Width;
-                    maxRowHeight = Math.Max(maxRowHeight, child.DesiredSize.Height);
                 }
+            }
+
+            // 行ごとにグルーピングする
+            var group = this.Children.OfType<UIElement>()
+                                     .GroupBy(x => GetActualRow(x));
+
+            var totalSize = new Size();
+            if (group.Count() != 0)
+            {
+                totalSize.Width = group.Max(rows => rows.Sum(o => o.DesiredSize.Width));
+                totalSize.Height = group.Sum(rows => rows.Max(o => o.DesiredSize.Height));
             }
 
             return totalSize;
