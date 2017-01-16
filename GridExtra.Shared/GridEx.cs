@@ -36,6 +36,13 @@ namespace SourceChord.GridExtra
         }
     }
 
+    struct GridLengthDefinition
+    {
+        public GridLength GridLength;
+        public double? Min;
+        public double? Max;
+    }
+
     public static class GridEx
     {
 
@@ -73,8 +80,10 @@ namespace SourceChord.GridExtra
 
             foreach (var item in list)
             {
-                var gridLength = StringToGridLength(item);
-                var columnDefinition = new ColumnDefinition() { Width = gridLength };
+                var def = StringToGridLengthDefinition(item);
+                var columnDefinition = new ColumnDefinition() { Width = def.GridLength };
+                if (def.Max != null) { columnDefinition.MaxWidth = def.Max.Value; }
+                if (def.Min != null) { columnDefinition.MinWidth = def.Min.Value; }
                 grid.ColumnDefinitions.Add(columnDefinition);
             }
         }
@@ -113,8 +122,10 @@ namespace SourceChord.GridExtra
 
             foreach (var item in list)
             {
-                var gridLength = StringToGridLength(item);
-                var rowDefinition = new RowDefinition() { Height = gridLength };
+                var def = StringToGridLengthDefinition(item);
+                var rowDefinition = new RowDefinition() { Height = def.GridLength };
+                if (def.Max != null) { rowDefinition.MaxHeight = def.Max.Value; }
+                if (def.Min != null) { rowDefinition.MinHeight = def.Min.Value; }
                 grid.RowDefinitions.Add(rowDefinition);
             }
         }
@@ -239,6 +250,26 @@ namespace SourceChord.GridExtra
 
                 result.Add(new AreaDefinition(group.Key, top, left, bottom - top + 1, right - left + 1));
             }
+
+            return result;
+        }
+
+        private static GridLengthDefinition StringToGridLengthDefinition(string source)
+        {
+            var r = new System.Text.RegularExpressions.Regex(@"(^[^\(\)]+)(?:\((.*)-(.*)\))?");
+            var m = r.Match(source);
+
+            var length = m.Groups[1].Value;
+            var min = m.Groups[2].Value;
+            var max = m.Groups[3].Value;
+
+            double temp;
+            var result = new GridLengthDefinition()
+            {
+                GridLength = StringToGridLength(length),
+                Min = double.TryParse(min, out temp) ? temp : (double?)null,
+                Max = double.TryParse(max, out temp) ? temp : (double?)null
+            };
 
             return result;
         }
