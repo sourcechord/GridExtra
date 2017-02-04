@@ -18,6 +18,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace SourceChord.GridExtra
 {
+#if WINDOWS_WPF
+    using LayoutUpdateEventHandler = EventHandler;
+#elif WINDOWS_UWP
+    using LayoutUpdateEventHandler = EventHandler<object>;
+#else
+#endif
+
     public class AreaDefinition
     {
         public string Name { get; set; }
@@ -45,6 +52,143 @@ namespace SourceChord.GridExtra
 
     public static class GridEx
     {
+        public static Orientation GetAutoFillOrientation(DependencyObject obj)
+        {
+            return (Orientation)obj.GetValue(AutoFillOrientationProperty);
+        }
+        public static void SetAutoFillOrientation(DependencyObject obj, Orientation value)
+        {
+            obj.SetValue(AutoFillOrientationProperty, value);
+        }
+        // Using a DependencyProperty as the backing store for AutoFillOrientation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AutoFillOrientationProperty =
+            DependencyProperty.RegisterAttached("AutoFillOrientation", typeof(Orientation), typeof(GridEx), new PropertyMetadata(Orientation.Horizontal));
+
+
+        public static bool GetAutoFillChildren(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(AutoFillChildrenProperty);
+        }
+        public static void SetAutoFillChildren(DependencyObject obj, bool value)
+        {
+            obj.SetValue(AutoFillChildrenProperty, value);
+        }
+        // Using a DependencyProperty as the backing store for AutoFillChildren.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AutoFillChildrenProperty =
+            DependencyProperty.RegisterAttached("AutoFillChildren", typeof(bool), typeof(GridEx), new PropertyMetadata(false, OnAutoFillChildrenChanged));
+
+        private static void OnAutoFillChildrenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var grid = d as Grid;
+            var isEnabled = (bool)e.NewValue;
+            if (grid == null) { return; }
+
+            if (isEnabled)
+            {
+                var layoutUpdateCallback = CreateLayoutUpdateHandler(grid);
+                // イベントの登録
+                grid.LayoutUpdated += layoutUpdateCallback;
+                SetLayoutUpdatedCallback(grid, layoutUpdateCallback);
+
+                // AutoFill処理を行う
+                AutoFill(grid);
+            }
+            else
+            {
+                // イベントの解除
+                var callback = GetLayoutUpdatedCallback(grid);
+                grid.LayoutUpdated -= callback;
+            }
+        }
+
+
+        private static LayoutUpdateEventHandler CreateLayoutUpdateHandler(Grid grid)
+        {
+            var prevCount = 0;
+            var prevColumn = grid.ColumnDefinitions.Count;
+            var prevRow = grid.RowDefinitions.Count;
+            var prevOrientation = GetAutoFillOrientation(grid);
+
+            var layoutUpdateCallback = new LayoutUpdateEventHandler((sender, args) =>
+            {
+                var count = grid.Children.Count;
+                var column = grid.ColumnDefinitions.Count;
+                var row = grid.RowDefinitions.Count;
+                var orientation = GetAutoFillOrientation(grid);
+
+                if (count != prevCount ||
+                    column != prevColumn ||
+                    row != prevRow ||
+                    orientation != prevOrientation)
+                {
+                    AutoFill(grid);
+                    prevCount = count;
+                    prevColumn = column;
+                    prevRow = row;
+                    prevOrientation = orientation;
+                }
+            });
+
+            return layoutUpdateCallback;
+        }
+
+        public static LayoutUpdateEventHandler GetLayoutUpdatedCallback(DependencyObject obj)
+        {
+            return (LayoutUpdateEventHandler)obj.GetValue(LayoutUpdatedCallbackProperty);
+        }
+        private static void SetLayoutUpdatedCallback(DependencyObject obj, LayoutUpdateEventHandler value)
+        {
+            obj.SetValue(LayoutUpdatedCallbackProperty, value);
+        }
+        // Using a DependencyProperty as the backing store for LayoutUpdatedCallback.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LayoutUpdatedCallbackProperty =
+            DependencyProperty.RegisterAttached("LayoutUpdatedCallback", typeof(LayoutUpdateEventHandler), typeof(GridEx), new PropertyMetadata(null));
+
+
+        private static void AutoFill(Grid grid)
+        {
+            System.Diagnostics.Debug.WriteLine("AutoFill");
+            var rowCount = grid.RowDefinitions.Count;
+            var columnCount = grid.ColumnDefinitions.Count;
+            var orientation = GetAutoFillOrientation(grid);
+
+            var x = 0;
+            var y = 0;
+            // Gridの子要素を、順番にGrid内に並べていく
+            foreach (FrameworkElement child in grid.Children)
+            {
+                // Visibility.Collapsedの項目は除外する
+                if (child.Visibility == Visibility.Collapsed)
+                {
+                    continue;
+                }
+
+                Grid.SetRow(child, y);
+                Grid.SetColumn(child, x);
+                Grid.SetRowSpan(child, 1);
+                Grid.SetColumnSpan(child, 1);
+
+                // Orientationの方向に進める
+                if (orientation == Orientation.Horizontal)
+                {
+                    x++;
+                    if (x >= columnCount)
+                    {
+                        x = 0;
+                        y++;
+                    }
+                }
+                else
+                {
+                    y++;
+                    if (y >= rowCount)
+                    {
+                        y = 0;
+                        x++;
+                    }
+                }
+            }
+        }
 
         public static string GetColumnDefinition(DependencyObject obj)
         {
