@@ -98,6 +98,9 @@ namespace SourceChord.GridExtra
                 // イベントの解除
                 var callback = GetLayoutUpdatedCallback(grid);
                 grid.LayoutUpdated -= callback;
+
+                // AutoFill処理のリセット
+                ClearAutoFill(grid);
             }
         }
 
@@ -189,6 +192,18 @@ namespace SourceChord.GridExtra
                 }
             }
         }
+
+        private static void ClearAutoFill(Grid grid)
+        {
+            foreach (FrameworkElement child in grid.Children)
+            {
+                child.ClearValue(Grid.RowProperty);
+                child.ClearValue(Grid.ColumnProperty);
+                child.ClearValue(Grid.RowSpanProperty);
+                child.ClearValue(Grid.ColumnSpanProperty);
+            }
+        }
+
 
         public static string GetColumnDefinition(DependencyObject obj)
         {
