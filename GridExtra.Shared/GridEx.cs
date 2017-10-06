@@ -373,7 +373,7 @@ namespace SourceChord.GridExtra
             // Gridの子要素のすべてのRegion設定を反映しなおす
             foreach(FrameworkElement child in grid.Children)
             {
-                UpdateArea(child, GetAreaName(child));
+                UpdateItemPosition(child);
             }
         }
 
@@ -506,40 +506,14 @@ namespace SourceChord.GridExtra
         private static void OnAreaNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as FrameworkElement;
-            var name = e.NewValue as string;
 
-            if (ctrl == null || name == null)
+            if (ctrl == null)
             {
                 return;
             }
 
-            if (ctrl.Parent == null)
-            {
-                ctrl.Loaded += (_, __) => { UpdateArea(ctrl, name); };
-            }
-            else
-            {
-                UpdateArea(ctrl, name);
-            }
+            UpdateItemPosition(ctrl);
         }
-
-        private static void UpdateArea(FrameworkElement element, string name)
-        {
-            var grid = element.Parent as Grid;
-            if (grid == null) return;
-            var areaList = GetAreaDefinitions(grid);
-            if (areaList == null) return;
-
-            var area = areaList.FirstOrDefault(o => o.Name == name);
-            if (area != null)
-            {
-                Grid.SetRow(element, area.Row);
-                Grid.SetColumn(element, area.Column);
-                Grid.SetRowSpan(element, area.RowSpan);
-                Grid.SetColumnSpan(element, area.ColumnSpan);
-            }
-        }
-
 
         public static string GetArea(DependencyObject obj)
         {
@@ -556,28 +530,64 @@ namespace SourceChord.GridExtra
         private static void OnAreaChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var ctrl = d as FrameworkElement;
-            var param = e.NewValue as string;
 
-            if (d == null || param == null)
+            if (d == null)
             {
                 return;
             }
+
+            UpdateItemPosition(ctrl);
+        }
+
+
+        private static void UpdateItemPosition(FrameworkElement element)
+        {
+            // AreaNameの設定
+            if (ApplyAreaName(element)) { return; }
+
+            // Areaの設定
+            if (ApplyArea(element)) { return; }
+        }
+
+
+        private static bool ApplyAreaName(FrameworkElement element)
+        {
+            var name = GetAreaName(element);
+            var grid = element.Parent as Grid;
+            if (grid == null || name == null) { return false; }
+            var areaList = GetAreaDefinitions(grid);
+            if (areaList == null) { return false; }
+
+            var area = areaList.FirstOrDefault(o => o.Name == name);
+            if (area == null) { return false; }
+
+            Grid.SetRow(element, area.Row);
+            Grid.SetColumn(element, area.Column);
+            Grid.SetRowSpan(element, area.RowSpan);
+            Grid.SetColumnSpan(element, area.ColumnSpan);
+
+            return true;
+        }
+
+        private static bool ApplyArea(FrameworkElement element)
+        {
+            var param = GetArea(element);
+            if (param == null) { return false; }
 
             var list = param.Split(',')
-                            .Select(o => o.Trim())
-                            .Select(o => int.Parse(o))
-                            .ToList();
+                .Select(o => o.Trim())
+                .Select(o => int.Parse(o))
+                .ToList();
 
             // Row, Column, RowSpan, ColumnSpan
-            if (list.Count() != 4)
-            {
-                return;
-            }
+            if (list.Count() != 4) { return false; }
 
-            Grid.SetRow(ctrl, list[0]);
-            Grid.SetColumn(ctrl, list[1]);
-            Grid.SetRowSpan(ctrl, list[2]);
-            Grid.SetColumnSpan(ctrl, list[3]);
+            Grid.SetRow(element, list[0]);
+            Grid.SetColumn(element, list[1]);
+            Grid.SetRowSpan(element, list[2]);
+            Grid.SetColumnSpan(element, list[3]);
+
+            return true;
         }
     }
 }
