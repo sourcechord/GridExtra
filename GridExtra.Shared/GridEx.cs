@@ -258,8 +258,6 @@ namespace SourceChord.GridExtra
 
                 UpdateItemPosition(child);
             }
-
-            // ここで、GridExの各種設定を再適用する。
         }
 
 
@@ -281,6 +279,12 @@ namespace SourceChord.GridExtra
             var param = e.NewValue as string;
 
             InitializeColumnDefinition(grid, param);
+
+            var template = GetTemplateArea(grid);
+            if (template != null)
+            {
+                InitializeTemplateArea(grid, template);
+            }
         }
 
         private static void InitializeColumnDefinition(Grid grid, string param)
@@ -323,6 +327,12 @@ namespace SourceChord.GridExtra
             var param = e.NewValue as string;
 
             InitializeRowDefinition(grid, param);
+
+            var template = GetTemplateArea(grid);
+            if (template != null)
+            {
+                InitializeTemplateArea(grid, template);
+            }
         }
 
         private static void InitializeRowDefinition(Grid grid, string param)
@@ -346,8 +356,6 @@ namespace SourceChord.GridExtra
                 grid.RowDefinitions.Add(rowDefinition);
             }
         }
-
-
 
         // ↓GridEx内部でだけ使用する、プライベートな添付プロパティ
         public static IList<NamedAreaDefinition> GetAreaDefinitions(DependencyObject obj)
@@ -381,11 +389,27 @@ namespace SourceChord.GridExtra
             var grid = d as Grid;
             var param = e.NewValue as string;
 
-            if (d == null || param == null)
+            if (d == null)
             {
                 return;
             }
 
+            // グリッドを一度初期化
+            grid.RowDefinitions.Clear();
+            grid.ColumnDefinitions.Clear();
+
+            // GridEx.RowDefinition/GridEx.ColumnDefinitionの設定内容で、行/列を初期化
+            InitializeRowDefinition(grid, GetRowDefinition(grid));
+            InitializeColumnDefinition(grid, GetColumnDefinition(grid));
+
+            if (param != null)
+            {
+                InitializeTemplateArea(grid, param);
+            }
+        }
+
+        private static void InitializeTemplateArea(Grid grid, string param)
+        {
             // 行×列数のチェック
             // 空行や、スペースを除去して、行×列のデータ構造に変形
             var columns = param.Split(new[] { '\n', '/' })
@@ -401,14 +425,6 @@ namespace SourceChord.GridExtra
                 // Invalid Row Columns...
                 throw new ArgumentException("Invalid Row/Column definition.");
             }
-
-            // グリッドを一度初期化
-            grid.RowDefinitions.Clear();
-            grid.ColumnDefinitions.Clear();
-
-            // GridEx.RowDefinition/GridEx.ColumnDefinitionの設定内容で、行/列を初期化
-            InitializeRowDefinition(grid, GetRowDefinition(grid));
-            InitializeColumnDefinition(grid, GetColumnDefinition(grid));
 
             // グリッド数を調整(不足分の行/列を足す)
             var rowShortage = columns.Count() - grid.RowDefinitions.Count;
@@ -429,7 +445,7 @@ namespace SourceChord.GridExtra
 
             // 全体レイアウトの定義が変わったので、
             // Gridの子要素のすべてのRegion設定を反映しなおす
-            foreach(FrameworkElement child in grid.Children)
+            foreach (FrameworkElement child in grid.Children)
             {
                 UpdateItemPosition(child);
             }
