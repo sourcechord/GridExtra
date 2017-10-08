@@ -27,19 +27,28 @@ namespace SourceChord.GridExtra
 
     public class AreaDefinition
     {
-        public string Name { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
         public int RowSpan { get; set; }
         public int ColumnSpan { get; set; }
 
-        public AreaDefinition(string name, int row, int column, int rowSpan, int columnSpan)
+        public AreaDefinition(int row, int column, int rowSpan, int columnSpan)
         {
-            this.Name = name;
             this.Row = row;
             this.Column = column;
             this.RowSpan = rowSpan;
             this.ColumnSpan = columnSpan;
+        }
+    }
+
+    public class NamedAreaDefinition : AreaDefinition
+    {
+        public string Name { get; set; }
+
+        public NamedAreaDefinition(string name, int row, int column, int rowSpan, int columnSpan)
+            : base(row, column, rowSpan, columnSpan)
+        {
+            this.Name = name;
         }
     }
 
@@ -155,10 +164,42 @@ namespace SourceChord.GridExtra
             var columnCount = grid.ColumnDefinitions.Count;
             var orientation = GetAutoFillOrientation(grid);
 
+            var area = new bool[rowCount, columnCount];
+
+            var autoLayoutList = new List<FrameworkElement>();
+            // Grid内の位置固定要素のチェック
+            foreach (FrameworkElement child in grid.Children)
+            {
+                // AreaName ⇒ Areaの優先順位で、グリッド位置の設定を行う
+                var region = GetAreaNameRegion(child) ?? GetAreaRegion(child);
+                var isFixed = region != null;
+
+                if (isFixed)
+                {
+                    // 位置指定されているので、AutoFillReservedAreaに記録する
+                    var row = region.Row;
+                    var column = region.Column;
+                    var rowSpan = region.RowSpan;
+                    var columnSpan = region.ColumnSpan;
+
+                    for (var i = row; i < row + rowSpan; i++)
+                        for (var j = column; j < column + columnSpan; j++)
+                        {
+                            area[i, j] = true;
+                        }
+                }
+                else
+                {
+                    // Gridの位置未設定の要素は、自動レイアウト対象としてリストに追加
+                    autoLayoutList.Add(child);
+                }
+
+            }
+
             var x = 0;
             var y = 0;
             // Gridの子要素を、順番にGrid内に並べていく
-            foreach (FrameworkElement child in grid.Children)
+            foreach (FrameworkElement child in autoLayoutList)
             {
                 // Visibility.Collapsedの項目は除外する
                 if (child.Visibility == Visibility.Collapsed)
@@ -166,30 +207,43 @@ namespace SourceChord.GridExtra
                     continue;
                 }
 
-                Grid.SetRow(child, y);
-                Grid.SetColumn(child, x);
-                Grid.SetRowSpan(child, 1);
-                Grid.SetColumnSpan(child, 1);
+                while (true)
+                {
+                    var canArrange = !area[y, x];
+                    if (canArrange)
+                    {
+                        Grid.SetRow(child, y);
+                        Grid.SetColumn(child, x);
+                        Grid.SetRowSpan(child, 1);
+                        Grid.SetColumnSpan(child, 1);
+                    }
 
-                // Orientationの方向に進める
-                if (orientation == Orientation.Horizontal)
-                {
-                    x++;
-                    if (x >= columnCount)
+                    // Orientationの方向に進める
+                    if (orientation == Orientation.Horizontal)
                     {
-                        x = 0;
-                        y++;
-                    }
-                }
-                else
-                {
-                    y++;
-                    if (y >= rowCount)
-                    {
-                        y = 0;
                         x++;
+                        if (x >= columnCount)
+                        {
+                            x = 0;
+                            y++;
+                        }
+                    }
+                    else
+                    {
+                        y++;
+                        if (y >= rowCount)
+                        {
+                            y = 0;
+                            x++;
+                        }
+                    }
+
+                    if (canArrange)
+                    {
+                        break;
                     }
                 }
+
             }
         }
 
@@ -201,7 +255,11 @@ namespace SourceChord.GridExtra
                 child.ClearValue(Grid.ColumnProperty);
                 child.ClearValue(Grid.RowSpanProperty);
                 child.ClearValue(Grid.ColumnSpanProperty);
+
+                UpdateItemPosition(child);
             }
+
+            // ここで、GridExの各種設定を再適用する。
         }
 
 
@@ -292,17 +350,17 @@ namespace SourceChord.GridExtra
 
 
         // ↓GridEx内部でだけ使用する、プライベートな添付プロパティ
-        public static IList<AreaDefinition> GetAreaDefinitions(DependencyObject obj)
+        public static IList<NamedAreaDefinition> GetAreaDefinitions(DependencyObject obj)
         {
-            return (IList<AreaDefinition>)obj.GetValue(AreaDefinitionsProperty);
+            return (IList<NamedAreaDefinition>)obj.GetValue(AreaDefinitionsProperty);
         }
-        private static void SetAreaDefinitions(DependencyObject obj, IList<AreaDefinition> value)
+        private static void SetAreaDefinitions(DependencyObject obj, IList<NamedAreaDefinition> value)
         {
             obj.SetValue(AreaDefinitionsProperty, value);
         }
         // Using a DependencyProperty as the backing store for AreaDefinitions.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty AreaDefinitionsProperty =
-            DependencyProperty.RegisterAttached("AreaDefinitions", typeof(IList<AreaDefinition>), typeof(GridEx), new PropertyMetadata(null));
+            DependencyProperty.RegisterAttached("AreaDefinitions", typeof(IList<NamedAreaDefinition>), typeof(GridEx), new PropertyMetadata(null));
 
 
 
@@ -378,9 +436,9 @@ namespace SourceChord.GridExtra
         }
 
 
-        private static IList<AreaDefinition> ParseAreaDefinition(IEnumerable<string[]> columns)
+        private static IList<NamedAreaDefinition> ParseAreaDefinition(IEnumerable<string[]> columns)
         {
-            var result = new List<AreaDefinition>();
+            var result = new List<NamedAreaDefinition>();
 
             // Regionが正しく連結されているかチェック
             var flatten = columns.SelectMany(
@@ -407,7 +465,7 @@ namespace SourceChord.GridExtra
                     throw new ArgumentException($"\"{group.Key}\" is invalid area definition.");
                 }
 
-                result.Add(new AreaDefinition(group.Key, top, left, bottom - top + 1, right - left + 1));
+                result.Add(new NamedAreaDefinition(group.Key, top, left, bottom - top + 1, right - left + 1));
             }
 
             return result;
@@ -513,6 +571,14 @@ namespace SourceChord.GridExtra
             }
 
             UpdateItemPosition(ctrl);
+
+            // 子要素全体のAutoFillを計算しなおす
+            var grid = ctrl.Parent as Grid;
+            var isAutoFill = GetAutoFillChildren(grid);
+            if (isAutoFill)
+            {
+                AutoFill(grid);
+            }
         }
 
         public static string GetArea(DependencyObject obj)
@@ -537,42 +603,49 @@ namespace SourceChord.GridExtra
             }
 
             UpdateItemPosition(ctrl);
+
+            // 子要素全体のAutoFillを計算しなおす
+            var grid = ctrl.Parent as Grid;
+            var isAutoFill = GetAutoFillChildren(grid);
+            if (isAutoFill)
+            {
+                AutoFill(grid);
+            }
         }
 
 
         private static void UpdateItemPosition(FrameworkElement element)
         {
-            // AreaNameの設定
-            if (ApplyAreaName(element)) { return; }
-
-            // Areaの設定
-            if (ApplyArea(element)) { return; }
+            // AreaName ⇒ Areaの優先順位で、グリッド位置の設定を行う
+            var area = GetAreaNameRegion(element) ?? GetAreaRegion(element);
+            if (area != null)
+            {
+                Grid.SetRow(element, area.Row);
+                Grid.SetColumn(element, area.Column);
+                Grid.SetRowSpan(element, area.RowSpan);
+                Grid.SetColumnSpan(element, area.ColumnSpan);
+            }
         }
 
 
-        private static bool ApplyAreaName(FrameworkElement element)
+        private static AreaDefinition GetAreaNameRegion(FrameworkElement element)
         {
             var name = GetAreaName(element);
             var grid = element.Parent as Grid;
-            if (grid == null || name == null) { return false; }
+            if (grid == null || name == null) { return null; }
             var areaList = GetAreaDefinitions(grid);
-            if (areaList == null) { return false; }
+            if (areaList == null) { return null; }
 
             var area = areaList.FirstOrDefault(o => o.Name == name);
-            if (area == null) { return false; }
+            if (area == null) { return null; }
 
-            Grid.SetRow(element, area.Row);
-            Grid.SetColumn(element, area.Column);
-            Grid.SetRowSpan(element, area.RowSpan);
-            Grid.SetColumnSpan(element, area.ColumnSpan);
-
-            return true;
+            return new AreaDefinition(area.Row, area.Column, area.RowSpan, area.ColumnSpan);
         }
 
-        private static bool ApplyArea(FrameworkElement element)
+        private static AreaDefinition GetAreaRegion(FrameworkElement element)
         {
             var param = GetArea(element);
-            if (param == null) { return false; }
+            if (param == null) { return null; }
 
             var list = param.Split(',')
                 .Select(o => o.Trim())
@@ -580,14 +653,9 @@ namespace SourceChord.GridExtra
                 .ToList();
 
             // Row, Column, RowSpan, ColumnSpan
-            if (list.Count() != 4) { return false; }
+            if (list.Count() != 4) { return null; }
 
-            Grid.SetRow(element, list[0]);
-            Grid.SetColumn(element, list[1]);
-            Grid.SetRowSpan(element, list[2]);
-            Grid.SetColumnSpan(element, list[3]);
-
-            return true;
+            return new AreaDefinition(list[0], list[1], list[2], list[3]);
         }
     }
 }
