@@ -121,6 +121,30 @@ GridEx is Helper class for defining Grid properties.
 
 ![Example1](./docs/GridEx/example1.png)
 
+
+##### Row/Column Definition with Min/Max size
+
+```xml
+    <Grid ge:GridEx.RowDefinition="*, *, *, *"
+          ge:GridEx.ColumnDefinition="50, *(50-200), 2*(80-), 2*(-300)"
+          ShowGridLines="True">
+        <Button Grid.Row="1"
+                Grid.Column="2"
+                Margin="5"
+                Content="Button" />
+    </Grid>
+```
+`ge:GridEx.ColumnDefinition="50, *(50-200), 2*(80-), 2*(-300)"` is similar to below definition.
+
+```xml
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*" MinWidth="50" MaxWidth="200"/>
+            <ColumnDefinition Width="2*" MinWidth="80"/>
+            <ColumnDefinition Width="2*" MaxWidth="300"/>
+        </Grid.ColumnDefinitions>
+```
+
 #### Example2 (Area Definition)
 `Area` property provides the way of defineing Row/Column/RowSpan/ColumnSpan.
 
@@ -137,7 +161,7 @@ GridEx is Helper class for defining Grid properties.
     </Grid>
 ```
 
-![Example1](./docs/GridEx/example2.png)
+![Example2](./docs/GridEx/example2.png)
 
 
 #### Example3 (Named Template Area)
@@ -173,7 +197,7 @@ Children of Grid can be placed with region's name, that is defined by `TemplateA
     </Grid>
 ```
 
-![Example1](./docs/GridEx/example3.png)
+![Example3](./docs/GridEx/example3.png)
 
 
 Row devision is defined by line feed or `/`.
@@ -220,7 +244,7 @@ Row devision is defined by line feed or `/`.
     </Grid>
 ```
 
-![Example1](./docs/GridEx/example4.png)
+![Example4](./docs/GridEx/example4.png)
 
 
 
@@ -239,6 +263,79 @@ Row devision is defined by line feed or `/`.
 |-----|-----|-----|
 |Area|string|Sets a value that determines Row, Column, RowSpan, ColumnSpan properties.|
 |AreaName|string|Sets a name of regions for item's belong.(use with `TemplateArea` property)|
+
+
+
+#### Example5 (Auto fill children)
+
+![demo2](./docs/GridEx/demo2.gif)
+
+
+##### Attached Properties(for Grid)
+|Property Name|Type|Description|
+|-----|-----|-----|
+|AutoFillChildren|string|Gets or sets a value that indicates whether the Grid arranges its children to each cell.|
+|AutoFillOrientation|string|Sets a value that determines auto fill orientation.|
+##### Attached Properties(for Grid children)
+|Property Name|Type|Description|
+|-----|-----|-----|
+|AutoFillSpan|string|Sets a value that determines cell span value that is used during AutoFill process.|
+
+
+```xml
+    <Grid ge:GridEx.ColumnDefinition="*, *"
+        ge:GridEx.RowDefinition="Auto, Auto, Auto"
+        ge:GridEx.AutoFillChildren="True"
+        ShowGridLines="True">
+        <TextBlock Text="Name:" />
+        <TextBox VerticalAlignment="Top" Margin="5"/>
+
+        <TextBlock Text="Age:" />
+        <TextBox VerticalAlignment="Top" Margin="5"/>
+
+        <Button ge:GridEx.Area="2, 1, 1, 1"
+            Margin="5" Width="60"
+            HorizontalAlignment="Right"
+            Content="OK" />
+    </Grid>
+```
+![Example5](./docs/GridEx/example5.png)
+
+
+##### AutoFillChildren with Hidden/Collapsed items
+
+```xml
+    <Grid ge:GridEx.ColumnDefinition="*, *, *"
+          ge:GridEx.RowDefinition="*, *"
+          ge:GridEx.AutoFillChildren="True">
+        <Button Content="1" Visibility="Hidden"/>
+        <Button Content="2" />
+        <Button Content="3" />
+        <Button Content="4" />
+        <Button Content="5" Visibility="Collapsed" />
+        <Button Content="6" />
+    </Grid>
+```
+![Example5_1](./docs/GridEx/example5_1.png)
+
+
+
+##### AutoFillChildren with pinned items
+
+```xml
+    <Grid ge:GridEx.ColumnDefinition="*, *, *"
+          ge:GridEx.RowDefinition="*, *"
+          ge:GridEx.AutoFillChildren="True">
+        <Button Content="1" />
+        <Button Content="2" />
+        <Button Content="3" />
+        <Button Content="4" />
+        <Button Content="Fixed Item" ge:GridEx.Area="0,1,1,1"/>
+    </Grid>
+```
+
+![Example5_2](./docs/GridEx/example5_2.png)
+
 
 ## Lisence
 [MIT](LICENSE)
