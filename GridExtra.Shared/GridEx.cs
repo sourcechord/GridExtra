@@ -196,8 +196,10 @@ namespace SourceChord.GridExtra
 
             }
 
-            var x = 0;
-            var y = 0;
+            var count = 0;
+            var numOfCell = rowCount * columnCount;
+            var isHorizontal = orientation == Orientation.Horizontal;
+            var isOverflow = false;
             // Gridの子要素を、順番にGrid内に並べていく
             foreach (FrameworkElement child in autoLayoutList)
             {
@@ -209,7 +211,9 @@ namespace SourceChord.GridExtra
 
                 while (true)
                 {
-                    var canArrange = !area[y, x];
+                    var x = isHorizontal ? count % columnCount : count / rowCount;
+                    var y = isHorizontal ? count / columnCount : count % rowCount;
+                    var canArrange = isOverflow ? true : !area[y, x];
                     if (canArrange)
                     {
                         Grid.SetRow(child, y);
@@ -218,24 +222,13 @@ namespace SourceChord.GridExtra
                         Grid.SetColumnSpan(child, 1);
                     }
 
-                    // Orientationの方向に進める
-                    if (orientation == Orientation.Horizontal)
+                    if (count + 1 < numOfCell)
                     {
-                        x++;
-                        if (x >= columnCount)
-                        {
-                            x = 0;
-                            y++;
-                        }
+                        count++;
                     }
                     else
                     {
-                        y++;
-                        if (y >= rowCount)
-                        {
-                            y = 0;
-                            x++;
-                        }
+                        isOverflow = true;
                     }
 
                     if (canArrange)
