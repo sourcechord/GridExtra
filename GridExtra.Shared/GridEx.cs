@@ -618,6 +618,11 @@ namespace SourceChord.GridExtra
 
             // 子要素全体のAutoFillを計算しなおす
             var grid = ctrl.Parent as Grid;
+            if (grid == null)
+            {
+                return;
+            }
+
             var isAutoFill = GetAutoFillChildren(grid);
             if (isAutoFill)
             {
