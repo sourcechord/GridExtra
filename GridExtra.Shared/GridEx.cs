@@ -159,10 +159,12 @@ namespace SourceChord.GridExtra
 
         private static void AutoFill(Grid grid)
         {
-            System.Diagnostics.Debug.WriteLine("AutoFill");
+            var isEnabled = GetAutoFillChildren(grid);
             var rowCount = grid.RowDefinitions.Count;
             var columnCount = grid.ColumnDefinitions.Count;
             var orientation = GetAutoFillOrientation(grid);
+
+            if (!isEnabled || rowCount == 0 || columnCount == 0) return;
 
             var area = new bool[rowCount, columnCount];
 
@@ -185,6 +187,7 @@ namespace SourceChord.GridExtra
                     for (var i = row; i < row + rowSpan; i++)
                         for (var j = column; j < column + columnSpan; j++)
                         {
+                            if (columnCount <= j || rowCount <= i) { continue; }
                             area[i, j] = true;
                         }
                 }
