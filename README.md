@@ -10,6 +10,8 @@ GridExtra is a custom panel library for WPF/UWP.
         * 12 columns across the page.(customizable with MaxDivision property)
 * GridEx
     * Helper class that defines usefull attached properties for Grid panel.
+* WrapPanelEx
+    * Helper class that provide adaptive layout for WrapPanel.
 
 ## install
 *Nuget Package*  
@@ -336,6 +338,38 @@ Row devision is defined by line feed or `/`.
 
 ![Example5_2](./docs/GridEx/example5_2.png)
 
+
+
+### WrapPanelEx **(WPF Only)**
+WrapPanelEx is Helper class that provide adaptive layout for WrapPanel.
+
+![demo](./docs/WrapPanelEx/demo.gif)
+
+#### Example1
+WrapPanelEx.AdaptiveLayout property makes WrapPanel into UWP Community Toolkit's AdaptiveGridView like layout.
+
+```xml
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <WrapPanel ItemWidth="200" ItemHeight="70"
+                   Orientation="Horizontal"
+                   ge:WrapPanelEx.AdaptiveLayout="{Binding IsChecked, ElementName=chkIsAdaptive}">
+            <Button />
+            <Button />
+            <Button />
+            <Button />
+            <Button />
+            <Button />
+            <Button />
+        </WrapPanel>
+        <CheckBox x:Name="chkIsAdaptive"
+                  Grid.Row="1" Margin="5"
+                  Content="WrapPanelEx.AdaptiveLayout"/>
+    </Grid>
+```
 
 ## Lisence
 [MIT](LICENSE)
