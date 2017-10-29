@@ -346,7 +346,7 @@ WrapPanelEx is Helper class that provide adaptive layout for WrapPanel.
 ![demo](./docs/WrapPanelEx/demo.gif)
 
 #### Example1
-WrapPanelEx.AdaptiveLayout property makes WrapPanel into UWP Community Toolkit's AdaptiveGridView like layout.
+WrapPanelEx.AdaptiveLayout property makes WrapPanel into UWP Community Toolkit's [AdaptiveGridView](https://docs.microsoft.com/en-us/windows/uwpcommunitytoolkit/controls/AdaptiveGridView) like layout.
 
 ```xml
     <Grid>
