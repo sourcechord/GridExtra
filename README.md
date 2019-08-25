@@ -52,9 +52,9 @@ ResponsiveGrid provides the grid layout system that is similar to Bootstrap fram
             </Style>
         </Grid.Resources>
         <rg:ResponsiveGrid>
-            <Border rg:ResponsiveGrid.XS="12" rg:ResponsiveGrid.SM="3" />
-            <Border rg:ResponsiveGrid.XS="12" rg:ResponsiveGrid.SM="6" />
-            <Border rg:ResponsiveGrid.XS="12" rg:ResponsiveGrid.SM="3" />
+            <Border ge:ResponsiveGrid.XS="12" ge:ResponsiveGrid.SM="3" />
+            <Border ge:ResponsiveGrid.XS="12" ge:ResponsiveGrid.SM="6" />
+            <Border ge:ResponsiveGrid.XS="12" ge:ResponsiveGrid.SM="3" />
         </rg:ResponsiveGrid>
     </Grid>
 ```
