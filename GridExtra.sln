@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridExtra.Wpf", "GridExtra.Wpf\GridExtra.Wpf.csproj", "{631C583B-5E88-4ABD-9926-C18E4ADDF6C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GridExtra.Wpf", "GridExtra.Wpf\GridExtra.Wpf.csproj", "{631C583B-5E88-4ABD-9926-C18E4ADDF6C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GridExtra.Uwp", "GridExtra.Uwp\GridExtra.Uwp.csproj", "{FE7A5887-17BC-48E9-B601-815A2FDBF2A0}"
 EndProject
@@ -11,7 +11,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GridExtra.Shared", "GridExt
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{611249A1-CDE6-4AAD-B532-73007C552C77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicSample.Wpf", "Sample\BasicSample.Wpf\BasicSample.Wpf.csproj", "{E180DF3E-1A9F-482E-A7E2-FD7FBB27514B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BasicSample.Wpf", "Sample\BasicSample.Wpf\BasicSample.Wpf.csproj", "{E180DF3E-1A9F-482E-A7E2-FD7FBB27514B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicSample.Uwp", "Sample\BasicSample.Uwp\BasicSample.Uwp.csproj", "{416D9AA6-F3E7-4338-B9A3-E060060DAF0C}"
 EndProject
@@ -24,8 +24,7 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		GridExtra.Shared\GridExtra.Shared.projitems*{4914d867-f667-4151-a039-3fde665f3106}*SharedItemsImports = 13
-		GridExtra.Shared\GridExtra.Shared.projitems*{631c583b-5e88-4abd-9926-c18e4addf6c6}*SharedItemsImports = 4
-		GridExtra.Shared\GridExtra.Shared.projitems*{fe7a5887-17bc-48e9-b601-815a2fdbf2a0}*SharedItemsImports = 4
+		GridExtra.Shared\GridExtra.Shared.projitems*{631c583b-5e88-4abd-9926-c18e4addf6c6}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,5 +112,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E180DF3E-1A9F-482E-A7E2-FD7FBB27514B} = {611249A1-CDE6-4AAD-B532-73007C552C77}
 		{416D9AA6-F3E7-4338-B9A3-E060060DAF0C} = {611249A1-CDE6-4AAD-B532-73007C552C77}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C9F2B52-DE04-4D3D-90FA-D68029EA50B2}
 	EndGlobalSection
 EndGlobal
